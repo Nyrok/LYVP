@@ -13,7 +13,7 @@ async def delayed_function(t, func, asc=False, *args):
     while True:
         if time() < expected:
             continue
-        func(*args) if not asc else asyncio.run(func(*args))
+        func(*args) if not asc else await func(*args)
         break
 
 
@@ -28,8 +28,8 @@ def download(link):
     try:
         filename = f"{video_id}.mp4"
         path = video_obj.streams.filter(res="144p").first().download(f'cache/{video_id}/video', filename)
-    except:
-        print("Je n'ai pas pu télécharger la vidéo YouTube.")
+    except Exception as e:
+        print("Je n'ai pas pu télécharger la vidéo YouTube.\nErreur: " + str(e))
         exit(403)
     print(f"Le téléchargement a été fait avec succès vers {path}")
     divide(video_id)
@@ -92,11 +92,11 @@ async def launch(video_id, i, n):
     print(f"Lancement du gif à: {path}")
     os.system(f"sudo ./led-video-viewer {path} --led-rows={height} --led-cols={width}")
     if i < n:
-        asyncio.run(delayed_function(60, launch, True, video_id, i + 1, n))
+        await delayed_function(60, launch, True, video_id, i + 1, n)
 
 
 if __name__ == '__main__':
-    height = int(input("Quelle est la hauteur en led ? "))
     width = int(input("Quelle est la largeur en led ? "))
+    height = int(input("Quelle est la hauteur en led ? "))
     link = input("Entrez un lien YouTube afin de commencer le téléchargement: ")
     download(link)
