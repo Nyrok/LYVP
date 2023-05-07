@@ -25,8 +25,8 @@ def download(link):
     video_id = extract.video_id(link)
     video_obj = YouTube(link)
     create_folder(f"./cache/{video_id}")
+    filename = f"{video_id}.mp4"
     try:
-        filename = f"{video_id}.mp4"
         path = video_obj.streams.filter(res="144p").first().download(f'cache/{video_id}/video', filename)
     except Exception as e:
         print("Je n'ai pas pu télécharger la vidéo YouTube.\nErreur: " + str(e))
@@ -87,10 +87,10 @@ def sound(video_id):
 
 
 async def launch(video_id, i, n):
-    global height, width
+    global width, height
     path = f"./cache/{video_id}/gif_parts/{video_id}_{i}.gif"
     print(f"Lancement du gif à: {path}")
-    os.system(f"sudo ./led-video-viewer {path} --led-rows={height} --led-cols={width}")
+    os.system(f"sudo /home/user/rpi-rgb-led-matrix/utils/led-image-viewer {path} --led-cols={width} --led-rows={height}")
     if i < n:
         await delayed_function(60, launch, True, video_id, i + 1, n)
 
