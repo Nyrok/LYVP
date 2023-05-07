@@ -2,6 +2,8 @@ import moviepy.video.VideoClip
 from pytube import YouTube, extract
 from moviepy.editor import VideoFileClip
 from time import time
+from rgbmatrix import RGBMatrix, RGBMatrixOptions
+from PIL import Image
 import asyncio
 import pyaudio
 import wave
@@ -97,16 +99,35 @@ def sound(video_id):
 
 
 async def launch(video_id, i, n):
-    global width, height
+    global options
     path = f"./cache/{video_id}/gif_parts/{video_id}_{i}.gif"
     print(f"Lancement du gif à: {path}")
-    os.system(f"sudo /home/user/rpi-rgb-led-matrix/utils/led-image-viewer {path} --led-cols={width} --led-rows={height}")
+    gif = Image.open(path)
+    num_frames = gif.n_frames
+    matrix = RGBMatrix(options=options)
+    for frame_index in range(0, num_frames):
+        gif.seek(frame_index)
+        duration = gif.info.get("duration")
+        framerate = 0.001 + (duration / 1000 / 2)
+        frame = gif.copy()
+        frame.thumbnail((matrix.width, matrix.height), Image.ANTIALIAS)
+        canvas = matrix.CreateFrameCanvas()
+        canvas.SetImage(frame.convert("RGB"))
+        matrix.SwapOnVSync(canvas, framerate_fraction=framerate)
+        time.sleep(framerate)
     if i < n:
-        await delayed_function(60, launch, True, video_id, i + 1, n)
+        await launch(video_id, i + 1, n)
 
 
 if __name__ == '__main__':
+    create_folder("./cache")
     width = int(input("Quelle est la largeur en led ? "))
     height = int(input("Quelle est la hauteur en led ? "))
+    options = RGBMatrixOptions()
+    options.rows = height
+    options.cols = width
+    options.chain_length = 1
+    options.parallel = 1
+    options.hardware_mapping = 'regular'
     link = input("Entrez un lien YouTube afin de commencer le téléchargement: ")
     download(link)
