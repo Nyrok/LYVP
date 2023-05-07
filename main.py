@@ -23,9 +23,24 @@ def create_folder(folder_path):
     not os.path.exists(folder_path) and os.mkdir(folder_path)
 
 
+def progress_function(stream, chunk, file_handle, bytes_remaining):
+    size = stream.filesize
+    p = 0
+    lastprogress = None
+    while p <= 100:
+        if p is not lastprogress:
+            print(f"Le téléchargement de la vidéo YouTube est à {str(p)}%")
+            lastprogress = p
+        p = percent(bytes_remaining, size)
+
+
+def percent(t, total):
+    return (float(t) / float(total)) * float(100)
+
+
 def download(link):
     video_id = extract.video_id(link)
-    video_obj = YouTube(link)
+    video_obj = YouTube(link, on_progress_callback=progress_function)
     create_folder(f"./cache/{video_id}")
     filename = f"{video_id}.mp4"
     try:
