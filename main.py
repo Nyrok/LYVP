@@ -1,3 +1,4 @@
+import moviepy.video.VideoClip
 from pytube import YouTube, extract
 from moviepy.editor import VideoFileClip
 from time import time
@@ -23,15 +24,13 @@ def create_folder(folder_path):
 def download(link):
     video_id = extract.video_id(link)
     video_obj = YouTube(link)
-    video_obj = video_obj.streams.get_lowest_resolution()
     create_folder(f"./cache/{video_id}")
     try:
         filename = f"{video_id}.mp4"
-        video_obj.download(f'cache/{video_id}/video', filename)
+        path = video_obj.streams.filter(res="144p").first().download(f'cache/{video_id}/video', filename)
     except:
         print("Je n'ai pas pu télécharger la vidéo YouTube.")
         exit(403)
-    path = f"./cache/{video_id}/video/{filename}"
     print(f"Le téléchargement a été fait avec succès vers {path}")
     divide(video_id)
 
@@ -66,8 +65,12 @@ def transform(video_id, n):
         video_part = VideoFileClip(path)
         new_path = f"./cache/{video_id}/gif_parts/{video_id}_{i}.gif"
         video_part.write_gif(new_path, fps=30, program='ffmpeg')
-    sound(video_id)
+    start(video_id, n)
+
+
+def start(video_id, n):
     asyncio.run(launch(video_id, 1, n))
+    sound(video_id)
 
 
 def sound(video_id):
