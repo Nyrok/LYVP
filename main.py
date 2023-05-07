@@ -1,7 +1,7 @@
 import moviepy.video.VideoClip
 from pytube import YouTube, extract
 from moviepy.editor import VideoFileClip
-from time import time
+from time import time, sleep
 from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
 import asyncio
@@ -129,7 +129,7 @@ async def launch(video_id, i, n):
         canvas = matrix.CreateFrameCanvas()
         canvas.SetImage(frame.convert("RGB"))
         matrix.SwapOnVSync(canvas, framerate_fraction=framerate)
-        time.sleep(framerate)
+        sleep(framerate)
     if i < n:
         await launch(video_id, i + 1, n)
 
