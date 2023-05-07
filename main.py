@@ -36,6 +36,7 @@ def download(link):
 
 
 def divide(video_id):
+    global width, height
     full_video = VideoFileClip(f"./cache/{video_id}/video/{video_id}.mp4")
     create_folder(f"./cache/{video_id}/audio")
     full_video.audio.write_audiofile(f"./cache/{video_id}/audio/{video_id}.wav")
@@ -43,15 +44,24 @@ def divide(video_id):
     single_duration = 60
     i = 1
     create_folder(f"./cache/{video_id}/video_parts")
-    while current_duration > single_duration:
-        clip = full_video.subclip(current_duration - single_duration, current_duration)
-        current_duration -= single_duration
-        current_video = os.path.realpath(f"./cache/{video_id}/video_parts/{video_id}_{i}.mp4")
-        clip.to_videofile(current_video, codec="libx264",
-                          temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
-        i += 1
+    if current_duration > 60:
+        while current_duration > single_duration:
+            clip = full_video.subclip(current_duration - single_duration, current_duration)
+            clip = clip.resize((width, height))
+            current_duration -= single_duration
+            current_video = os.path.realpath(f"./cache/{video_id}/video_parts/{video_id}_{i}.mp4")
+            clip.to_videofile(current_video, codec="libx264",
+                              temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
+            i += 1
+        else:
+            clip = full_video.subclip(0, current_duration)
+            clip = clip.resize((width, height))
+            current_video = os.path.realpath(f"./cache/{video_id}/video_parts/{video_id}_{i}.mp4")
+            clip.to_videofile(current_video, codec="libx264",
+                              temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
     else:
         clip = full_video.subclip(0, current_duration)
+        clip = clip.resize((width, height))
         current_video = os.path.realpath(f"./cache/{video_id}/video_parts/{video_id}_{i}.mp4")
         clip.to_videofile(current_video, codec="libx264",
                           temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
