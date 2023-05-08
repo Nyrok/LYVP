@@ -101,8 +101,18 @@ def transform(video_id, n):
 
 
 def start(video_id, n):
-    asyncio.run(launch(video_id, 1, n))
+    frames = parse(video_id, 1, n)
+    total_frames = len(frames)
+    duration = gif.info.get("duration")
+    framerate = 0.001 + (30 / 1000 / 2)
     sound(video_id)
+    cur_frame = 0
+    while (True):
+        matrix.SwapOnVSync(canvases[cur_frame], framerate_fraction=framerate)
+        if cur_frame == total_frames - 1:
+            break
+        else:
+            cur_frame += 1
 
 
 def sound(video_id):
@@ -118,15 +128,15 @@ def sound(video_id):
         data = wf.readframes(1024)
 
 
-async def launch(video_id, i, n):
+def parse(video_id, i, n):
     global options
+    if i >= n:
+        return []
     path = f"./cache/{video_id}/gif_parts/{video_id}_{i}.gif"
     print(f"Lancement du gif à: {path}")
     gif = Image.open(path)
     num_frames = gif.n_frames
     matrix = RGBMatrix(options=options)
-    duration = gif.info.get("duration")
-    framerate = 0.001 + (duration / 1000 / 2)
     canvas = []
     for frame_index in range(0, num_frames):
         gif.seek(frame_index)
@@ -135,15 +145,9 @@ async def launch(video_id, i, n):
         canva = matrix.CreateFrameCanvas()
         canva.SetImage(frame.convert("RGB"))
         canvas.append(canva)
-    cur_frame = 0
-    while (True):
-        matrix.SwapOnVSync(canvases[cur_frame], framerate_fraction=framerate)
-        if cur_frame == num_frames - 1:
-            if i < n:
-                await launch(video_id, i + 1, n)
-            break
-        else:
-            cur_frame += 1
+    return canvas + parse(video_id, i + 1, n)
+
+
 
 
 if __name__ == '__main__':
