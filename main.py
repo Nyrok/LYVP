@@ -109,7 +109,7 @@ def start(video_id, n):
     print(total_frames)
     duration = gif.info.get("duration")
     framerate = 0.001 + (30 / 1000 / 2)
-    sound(video_id)
+    #sound(video_id)
     cur_frame = 0
     while (True):
         matrix.SwapOnVSync(frames[cur_frame], framerate_fraction=framerate)
