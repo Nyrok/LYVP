@@ -2,7 +2,6 @@ import moviepy.video.VideoClip
 from pytube import YouTube, extract
 from moviepy.editor import VideoFileClip
 from time import time, sleep
-from rgbmatrix import RGBMatrix, RGBMatrixOptions
 from PIL import Image
 import asyncio
 import pyaudio
@@ -23,15 +22,20 @@ def create_folder(folder_path):
     not os.path.exists(folder_path) and os.mkdir(folder_path)
 
 
-def progress_function(stream, chunk, file_handle, bytes_remaining):
-    size = stream.filesize
-    p = 0
-    lastprogress = None
-    while p <= 100:
-        if p is not lastprogress:
-            print(f"Le téléchargement de la vidéo YouTube est à {str(p)}%")
-            lastprogress = p
-        p = percent(bytes_remaining, size)
+def on_progress(vid, chunk, bytes_remaining):
+    total_size = vid.filesize
+    bytes_downloaded = total_size - bytes_remaining
+    percentage_of_completion = bytes_downloaded / total_size * 100
+    totalsz = (total_size / 1024) / 1024
+    totalsz = round(totalsz, 1)
+    remain = (bytes_remaining / 1024) / 1024
+    remain = round(remain, 1)
+    dwnd = (bytes_downloaded / 1024) / 1024
+    dwnd = round(dwnd, 1)
+    percentage_of_completion = round(percentage_of_completion, 2)
+
+    print(
+        f'Download Progress: {percentage_of_completion}%, Total Size:{totalsz} MB, Downloaded: {dwnd} MB, Remaining:{remain} MB')
 
 
 def percent(t, total):
@@ -40,7 +44,8 @@ def percent(t, total):
 
 def download(link):
     video_id = extract.video_id(link)
-    video_obj = YouTube(link, on_progress_callback=progress_function)
+    video_obj = YouTube(link, on_progress_callback=on_progress)
+    video_obj.register_on_progress_callback(on_progress)
     create_folder(f"./cache/{video_id}")
     filename = f"{video_id}.mp4"
     try:
@@ -138,11 +143,5 @@ if __name__ == '__main__':
     create_folder("./cache")
     width = int(input("Quelle est la largeur en led ? "))
     height = int(input("Quelle est la hauteur en led ? "))
-    options = RGBMatrixOptions()
-    options.rows = height
-    options.cols = width
-    options.chain_length = 1
-    options.parallel = 1
-    options.hardware_mapping = 'regular'
     link = input("Entrez un lien YouTube afin de commencer le téléchargement: ")
     download(link)
