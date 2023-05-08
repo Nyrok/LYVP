@@ -71,6 +71,7 @@ def divide(video_id):
     if current_duration > 60:
         while current_duration > single_duration:
             clip = full_video.subclip(current_duration - single_duration, current_duration)
+            clip.without_audio()
             clip = clip.resize((width, height))
             current_duration -= single_duration
             current_video = os.path.realpath(f"./cache/{video_id}/video_parts/{video_id}_{i}.mp4")
@@ -78,11 +79,13 @@ def divide(video_id):
             i += 1
         else:
             clip = full_video.subclip(0, current_duration)
+            clip.without_audio()
             clip = clip.resize((width, height))
             current_video = os.path.realpath(f"./cache/{video_id}/video_parts/{video_id}_{i}.mp4")
             clip.to_videofile(current_video, codec="libx264")
     else:
         clip = full_video.subclip(0, current_duration)
+        clip.without_audio()
         clip = clip.resize((width, height))
         current_video = os.path.realpath(f"./cache/{video_id}/video_parts/{video_id}_{i}.mp4")
         clip.to_videofile(current_video, codec="libx264")
