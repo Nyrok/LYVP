@@ -101,8 +101,7 @@ def transform(video_id, n):
 
 
 def start(video_id, n):
-    global options
-    matrix = RGBMatrix(options=options)
+    global options, matrix
     frames = parse(video_id, 1, n)
     total_frames = len(frames)
     print(total_frames)
@@ -132,8 +131,7 @@ def sound(video_id):
 
 
 def parse(video_id, i, n):
-    global options
-    matrix = RGBMatrix(options=options)
+    global options, matrix
     if i >= n:
         return []
     path = f"./cache/{video_id}/gif_parts/{video_id}_{i}.gif"
@@ -160,5 +158,6 @@ if __name__ == '__main__':
     options.chain_length = 1
     options.parallel = 1
     options.hardware_mapping = 'regular'
+    matrix = RGBMatrix(options=options)
     link = input("Entrez un lien YouTube afin de commencer le téléchargement: ")
     download(link)
