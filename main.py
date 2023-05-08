@@ -1,4 +1,3 @@
-import moviepy.video.VideoClip
 from pytube import YouTube, extract
 from moviepy.editor import VideoFileClip
 from time import time, sleep
@@ -53,7 +52,7 @@ def download(link):
         path = video_obj.streams.filter(res="144p").first().download(f'cache/{video_id}/video', filename)
     except Exception as e:
         print("Je n'ai pas pu télécharger la vidéo YouTube.\nErreur: " + str(e))
-        exit(403)
+        exit(1)
     print(f"Le téléchargement a été fait avec succès vers {path}")
     divide(video_id)
 
@@ -107,6 +106,7 @@ def start(video_id, n):
     matrix = RGBMatrix(options=options)
     frames = parse(video_id, 1, n)
     total_frames = len(frames)
+    print(total_frames)
     duration = gif.info.get("duration")
     framerate = 0.001 + (30 / 1000 / 2)
     sound(video_id)
