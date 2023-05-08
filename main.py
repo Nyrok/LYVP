@@ -3,6 +3,7 @@ from pytube import YouTube, extract
 from moviepy.editor import VideoFileClip
 from time import time, sleep
 from PIL import Image
+from rgbmatrix import RGBMatrix, RGBMatrixOptions
 import asyncio
 import pyaudio
 import wave
@@ -155,5 +156,11 @@ if __name__ == '__main__':
     create_folder("./cache")
     width = int(input("Quelle est la largeur en led ? "))
     height = int(input("Quelle est la hauteur en led ? "))
+    options = RGBMatrixOptions()
+    options.rows = height
+    options.cols = width
+    options.chain_length = 1
+    options.parallel = 1
+    options.hardware_mapping = 'regular'
     link = input("Entrez un lien YouTube afin de commencer le téléchargement: ")
     download(link)
