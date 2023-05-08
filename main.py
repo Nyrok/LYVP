@@ -66,28 +66,27 @@ def divide(video_id):
     single_duration = 60
     i = 1
     create_folder(f"./cache/{video_id}/video_parts")
-    full_video.without_audio()
     if current_duration > 60:
         while current_duration > single_duration:
             clip = full_video.subclip(current_duration - single_duration, current_duration)
-            clip = clip.without_audio()
             clip = clip.resize((width, height))
             current_duration -= single_duration
             current_video = os.path.realpath(f"./cache/{video_id}/video_parts/{video_id}_{i}.mp4")
-            clip.to_videofile(current_video, codec="libx264", temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
+            clip.to_videofile(current_video, codec="libx264", temp_audiofile='temp-audio.m4a', remove_temp=True,
+                              audio_codec='aac')
             i += 1
         else:
             clip = full_video.subclip(0, current_duration)
-            clip = clip.without_audio()
             clip = clip.resize((width, height))
             current_video = os.path.realpath(f"./cache/{video_id}/video_parts/{video_id}_{i}.mp4")
-            clip.to_videofile(current_video, codec="libx264", temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
+            clip.to_videofile(current_video, codec="libx264", temp_audiofile='temp-audio.m4a', remove_temp=True,
+                              audio_codec='aac')
     else:
         clip = full_video.subclip(0, current_duration)
-        clip = clip.without_audio()
         clip = clip.resize((width, height))
         current_video = os.path.realpath(f"./cache/{video_id}/video_parts/{video_id}_{i}.mp4")
-        clip.to_videofile(current_video, codec="libx264", temp_audiofile='temp-audio.m4a', remove_temp=True, audio_codec='aac')
+        clip.to_videofile(current_video, codec="libx264", temp_audiofile='temp-audio.m4a', remove_temp=True,
+                          audio_codec='aac')
     transform(video_id, i)
 
 
@@ -109,9 +108,9 @@ def start(video_id, n):
     print(total_frames)
     duration = gif.info.get("duration")
     framerate = 0.001 + (30 / 1000 / 2)
-    #sound(video_id)
+    # sound(video_id)
     cur_frame = 0
-    while (True):
+    while True:
         matrix.SwapOnVSync(frames[cur_frame], framerate_fraction=framerate)
         if cur_frame == total_frames - 1:
             break
@@ -149,8 +148,6 @@ def parse(video_id, i, n):
         canvas.SetImage(frame.convert("RGB"))
         canvases.append(canvas)
     return canvases + parse(video_id, i + 1, n)
-
-
 
 
 if __name__ == '__main__':
