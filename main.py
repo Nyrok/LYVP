@@ -105,7 +105,7 @@ def transform(video_id, n):
 def start(video_id, n):
     global options
     matrix = RGBMatrix(options=options)
-    frames = parse(video_id, 1, n, matrix)
+    frames = parse(video_id, 1, n)
     total_frames = len(frames)
     duration = gif.info.get("duration")
     framerate = 0.001 + (30 / 1000 / 2)
@@ -132,7 +132,9 @@ def sound(video_id):
         data = wf.readframes(1024)
 
 
-def parse(video_id, i, n, matrix):
+def parse(video_id, i, n):
+    global options
+    matrix = RGBMatrix(options=options)
     if i >= n:
         return []
     path = f"./cache/{video_id}/gif_parts/{video_id}_{i}.gif"
@@ -146,7 +148,7 @@ def parse(video_id, i, n, matrix):
         canvas = matrix.CreateFrameCanvas()
         canvas.SetImage(frame.convert("RGB"))
         canvases.append(canvas)
-    return canvases + parse(video_id, i + 1, n, matrix)
+    return canvases + parse(video_id, i + 1, n)
 
 
 
