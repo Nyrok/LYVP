@@ -125,18 +125,25 @@ async def launch(video_id, i, n):
     gif = Image.open(path)
     num_frames = gif.n_frames
     matrix = RGBMatrix(options=options)
+    duration = gif.info.get("duration")
+    framerate = 0.001 + (duration / 1000 / 2)
+    canvas = []
     for frame_index in range(0, num_frames):
         gif.seek(frame_index)
-        duration = gif.info.get("duration")
-        framerate = 0.001 + (duration / 1000 / 2)
         frame = gif.copy()
         frame.thumbnail((matrix.width, matrix.height), Image.ANTIALIAS)
-        canvas = matrix.CreateFrameCanvas()
-        canvas.SetImage(frame.convert("RGB"))
-        matrix.SwapOnVSync(canvas, framerate_fraction=framerate)
-        sleep(framerate)
-    if i < n:
-        await launch(video_id, i + 1, n)
+        canva = matrix.CreateFrameCanvas()
+        canva.SetImage(frame.convert("RGB"))
+        canvas.append(canva)
+    cur_frame = 0
+    while (True):
+        matrix.SwapOnVSync(canvases[cur_frame], framerate_fraction=framerate)
+        if cur_frame == num_frames - 1:
+            if i < n:
+                await launch(video_id, i + 1, n)
+            break
+        else:
+            cur_frame += 1
 
 
 if __name__ == '__main__':
