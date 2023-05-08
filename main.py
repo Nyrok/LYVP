@@ -66,6 +66,7 @@ def divide(video_id):
     single_duration = 60
     i = 1
     create_folder(f"./cache/{video_id}/video_parts")
+    full_video.without_audio()
     if current_duration > 60:
         while current_duration > single_duration:
             clip = full_video.subclip(current_duration - single_duration, current_duration)
