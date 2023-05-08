@@ -103,6 +103,8 @@ def transform(video_id, n):
 
 
 def start(video_id, n):
+    global options
+    matrix = RGBMatrix(options=options)
     frames = parse(video_id, 1, n)
     total_frames = len(frames)
     duration = gif.info.get("duration")
@@ -131,23 +133,21 @@ def sound(video_id):
 
 
 def parse(video_id, i, n):
-    global options
+    global matrix
     if i >= n:
         return []
     path = f"./cache/{video_id}/gif_parts/{video_id}_{i}.gif"
-    print(f"Lancement du gif à: {path}")
+    print(f"Récupération des frames du gif: {path}")
     gif = Image.open(path)
-    num_frames = gif.n_frames
-    matrix = RGBMatrix(options=options)
-    canvas = []
-    for frame_index in range(0, num_frames):
+    canvases = []
+    for frame_index in range(0, gif.n_frames):
         gif.seek(frame_index)
         frame = gif.copy()
         frame.thumbnail((matrix.width, matrix.height), Image.ANTIALIAS)
-        canva = matrix.CreateFrameCanvas()
-        canva.SetImage(frame.convert("RGB"))
-        canvas.append(canva)
-    return canvas + parse(video_id, i + 1, n)
+        canvas = matrix.CreateFrameCanvas()
+        canvas.SetImage(frame.convert("RGB"))
+        canvases.append(canvas)
+    return canvases + parse(video_id, i + 1, n)
 
 
 
