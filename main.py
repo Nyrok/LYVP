@@ -112,7 +112,7 @@ def start(video_id, n):
     sound(video_id)
     cur_frame = 0
     while (True):
-        matrix.SwapOnVSync(canvases[cur_frame], framerate_fraction=framerate)
+        matrix.SwapOnVSync(frames[cur_frame], framerate_fraction=framerate)
         if cur_frame == total_frames - 1:
             break
         else:
