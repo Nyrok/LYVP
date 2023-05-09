@@ -107,7 +107,7 @@ def transform(video_id, n):
 
 
 def start(video_id):
-    asyncio.run(sound(video_id))
+    #asyncio.run(sound(video_id))
     launch(video_id)
 
 
