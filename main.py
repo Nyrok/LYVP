@@ -43,6 +43,7 @@ def percent(t, total):
 
 
 def download(link):
+    global width, height
     video_id = extract.video_id(link)
     video_obj = YouTube(link, on_progress_callback=on_progress)
     video_obj.register_on_progress_callback(on_progress)
