@@ -56,6 +56,7 @@ def download(link):
     print(f"Le téléchargement a été fait avec succès vers {path}")
     create_folder(f"./cache/{video_id}/gif")
     full_video = VideoFileClip(f"./cache/{video_id}/video/{video_id}.mp4")
+    full_video = full_video.resize((width, height))
     new_path = f"./cache/{video_id}/gif/{video_id}.gif"
     full_video.write_gif(new_path, fps=30, program='ffmpeg')
     #divide(video_id)
