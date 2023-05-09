@@ -1,8 +1,8 @@
-import moviepy.video.VideoClip
 from pytube import YouTube, extract
 from moviepy.editor import VideoFileClip
 from time import time, sleep
 from PIL import Image
+from rgbmatrix import RGBMatrix, RGBMatrixOptions
 import asyncio
 import pyaudio
 import wave
@@ -101,11 +101,11 @@ def transform(video_id, n):
 
 
 def start(video_id, n):
-    asyncio.run(launch(video_id, 1, n))
-    sound(video_id)
+    asyncio.run(sound(video_id))
+    launch(video_id, 1, n)
 
 
-def sound(video_id):
+async def sound(video_id):
     wf = wave.open(f"./cache/{video_id}/audio/{video_id}.wav", 'rb')
     p = pyaudio.PyAudio()
     stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
@@ -118,7 +118,7 @@ def sound(video_id):
         data = wf.readframes(1024)
 
 
-async def launch(video_id, i, n):
+def launch(video_id, i, n):
     global options
     path = f"./cache/{video_id}/gif_parts/{video_id}_{i}.gif"
     print(f"Lancement du gif à: {path}")
@@ -136,12 +136,18 @@ async def launch(video_id, i, n):
         matrix.SwapOnVSync(canvas, framerate_fraction=framerate)
         sleep(framerate)
     if i < n:
-        await launch(video_id, i + 1, n)
+        launch(video_id, i + 1, n)
 
 
 if __name__ == '__main__':
     create_folder("./cache")
     width = int(input("Quelle est la largeur en led ? "))
     height = int(input("Quelle est la hauteur en led ? "))
+    options = RGBMatrixOptions()
+    options.rows = height
+    options.cols = width
+    options.chain_length = 1
+    options.parallel = 1
+    options.hardware_mapping = 'regular'
     link = input("Entrez un lien YouTube afin de commencer le téléchargement: ")
     download(link)
