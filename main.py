@@ -54,7 +54,12 @@ def download(link):
         print("Je n'ai pas pu télécharger la vidéo YouTube.\nErreur: " + str(e))
         exit(403)
     print(f"Le téléchargement a été fait avec succès vers {path}")
-    divide(video_id)
+    create_folder(f"./cache/{video_id}/gif")
+    full_video = VideoFileClip(f"./cache/{video_id}/video/{video_id}.mp4")
+    new_path = f"./cache/{video_id}/gif/{video_id}.gif"
+    full_video.write_gif(new_path, fps=30, program='ffmpeg')
+    #divide(video_id)
+    start(video_id)
 
 
 def divide(video_id):
@@ -100,9 +105,9 @@ def transform(video_id, n):
     start(video_id, n)
 
 
-def start(video_id, n):
+def start(video_id):
     asyncio.run(sound(video_id))
-    launch(video_id, 1, n)
+    launch(video_id)
 
 
 async def sound(video_id):
@@ -118,11 +123,11 @@ async def sound(video_id):
         data = wf.readframes(1024)
 
 
-def launch(video_id, i, n):
+def launch(video_id):
     global options
-    path = f"./cache/{video_id}/gif_parts/{video_id}_{i}.gif"
+    path = f"./cache/{video_id}/gif/{video_id}.gif"
     print(f"Lancement du gif à: {path}")
-    gif = Image.open(path)
+    gif = Image.open(os.path.realpath(path))
     num_frames = gif.n_frames
     matrix = RGBMatrix(options=options)
     for frame_index in range(0, num_frames):
@@ -135,8 +140,8 @@ def launch(video_id, i, n):
         canvas.SetImage(frame.convert("RGB"))
         matrix.SwapOnVSync(canvas, framerate_fraction=framerate)
         sleep(framerate)
-    if i < n:
-        launch(video_id, i + 1, n)
+    else:
+        print("L'exécution de la vidéo est terminé")
 
 
 if __name__ == '__main__':
