@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>Lecteur de Média sur Ecran LED</title>
+        <style>
+            body {
+                font-weight: bold;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: larger;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        </style>
+        <script>
+            function change(value){
+                const element = document.getElementById('source');
+                element.disabled = value !== "video";
+                element.value = 'path';
+            }
+        </script>
+    </head>
+    <body>
+        <form action="/submit" method="post">
+            <label for="media">Média:&nbsp;</label>
+            <select onchange="change(this.value);" name="media" id="media" required>
+                <option value="gif">GIF</option>
+                <option value="video">Video</option>
+                <option value="image">Image</option>
+            </select>
+            <br/>
+            <label for="source">Source:&nbsp;</label>
+            <select name="source" id="source" disabled>
+                <option value="path">Path</option>
+                <option value="internet">Internet</option>
+            </select>
+            <br/>
+            <label for="link">Lien:&nbsp;&nbsp;</label><input type="text" id="link" name="link" required/>
+            <br/>
+            <input type="submit" value="Envoyer"/>
+        </form>
+    </body>
+</html>
