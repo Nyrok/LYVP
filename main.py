@@ -21,7 +21,6 @@ def submit():
     link = result.get('link', None)
     source = result.get('source', None)
     if not width or not height:
-        pass
         return error('Erreur lors du lancement du script:\nLe paramètre width/height est manquant.')
     elif not media or not link:
         return error('Erreur lors du lancement du script:\nLa méthode ou le lien est manquant.')
@@ -34,21 +33,14 @@ def submit():
             path = os.path.realpath(link)
             start(path=path, isImage=False)
         elif source == 'internet':
-            path = download(os.path.realpath(link))
+            path = download(os.path.realpath(link), width=width, height=height)
             if type(path) is not str:
                 return error("Erreur lors du téléchargement de la vidéo YouTube:\n" + path[1])
             start(path=path, isImage=False)
 
     return render_template('submit.html', media=media, source=source, link=link)
 
-
-app.run(debug=True)
-
-if False and __name__ == '__main__':
+if __name__ == '__main__':
     create_folder("./cache")
-    options = RGBMatrixOptions()
-    options.rows = height
-    options.cols = width
-    options.chain_length = 1
-    options.parallel = 1
-    options.hardware_mapping = 'regular'
+    create_folder("./cache/youtube")
+    app.run(debug=True)
