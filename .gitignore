@@ -3,3 +3,4 @@ cache
 temp-audio.m4a
 venv
 __pycache__
+.DS_Store
