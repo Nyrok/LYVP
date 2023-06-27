@@ -33,15 +33,16 @@ def download(link, width, height):
     print(f"Le téléchargement a été fait avec succès vers {path}")
     full_video = VideoFileClip(f"./cache/youtube/{video_id}/video/{video_id}.mp4")
     full_video = full_video.resize((width, height))
+    create_folder(f"./cache/youtube/{video_id}/gif")
     new_path = f"./cache/youtube/{video_id}/gif/{video_id}.gif"
     full_video.write_gif(new_path, fps=30, program='ffmpeg')
     return new_path
 
-def start(options, path, isImage=False, loop=True):
+def start(options, p, isImage=False, loop=True):
     matrix = RGBMatrix(options=options)
     if not isImage:
-        print(f"Lancement du gif à: {path}")
-        gif = Image.open(path.realpath(path))
+        print(f"Lancement du gif à: {p}")
+        gif = Image.open(path.realpath(p))
         num_frames = gif.n_frames
         for frame_index in range(0, num_frames):
             gif.seek(frame_index)
@@ -53,16 +54,23 @@ def start(options, path, isImage=False, loop=True):
             canvas.SetImage(frame.convert("RGB"))
             matrix.SwapOnVSync(canvas, framerate_fraction=framerate)
             sleep(framerate)
-        else:
-            if loop:
-                start(options, path, isImage, loop)
+        if loop:
+            start(options, p, isImage, loop)
     else:
-        print(f"Lancement de l'image à: {path}")
-        image = Image.open(path.realpath(path))
+        print(f"Lancement de l'image à: {p}")
+        image = Image.open(path.realpath(p))
         image.thumbnail((matrix.width, matrix.height), Image.ANTIALIAS)
         matrix.SetImage(image.convert('RGB'))
         while loop:
             sleep(100)
+
+
+def convert(path, width, height):
+    video = VideoFileClip(path)
+    video = video.resize((width, height))
+    new_path = path[:-3] + 'gif'
+    video.write_gif(new_path, fps=30, program='ffmpeg')
+    return new_path
 
 def __on_progress(vid, chunk, bytes_remaining):
     total_size = vid.filesize

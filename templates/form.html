@@ -53,10 +53,6 @@
     <body>
         <div id="form">
             <form action="/submit" method="post">
-                <label for="width">Largeur:&nbsp;</label><input type="number" id="width" name="width" required/>
-                <br/>
-                <label for="height">Hauteur:&nbsp;</label><input type="number" id="height" name="height" required/>
-                <br/>
                 <label for="media">Média:&nbsp;</label>
                 <select onchange="change(this.value);" name="media" id="media" required>
                     <option value="gif">GIF</option>
@@ -71,6 +67,8 @@
                 </select>
                 <br/>
                 <label for="link">Lien:&nbsp;&nbsp;</label><input type="text" id="link" name="link" required/>
+                <br/>
+                <label for="loop">Lire en Boucle:&nbsp;&nbsp;</label><input type="checkbox" id="loop" name="loop" checked/>
                 <br/>
                 <input type="submit" value="Lancer" id="button"/>
             </form>
